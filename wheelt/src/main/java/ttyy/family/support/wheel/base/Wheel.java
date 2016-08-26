@@ -9,6 +9,7 @@ import android.graphics.Paint;
 import android.graphics.Rect;
 import android.os.Build;
 import android.util.AttributeSet;
+import android.util.Log;
 import android.view.MotionEvent;
 import android.view.VelocityTracker;
 import android.view.View;
@@ -144,14 +145,14 @@ public class Wheel extends View implements Runnable {
     protected void onMeasure(int widthMeasureSpec, int heightMeasureSpec) {
         super.onMeasure(widthMeasureSpec, heightMeasureSpec);
 
+        mRectDrawn = new Rect(0, 0,
+                getMeasuredWidth(),
+                getMeasuredHeight());
+
         // Item Height
-        mItemHeight = getMeasuredHeight() / mVisibleItemCount;
+        mItemHeight = mRectDrawn.height() / mVisibleItemCount;
         mHalfItemHeight = mItemHeight / 2;
-        mRectDrawn = new Rect(getPaddingLeft(),
-                getPaddingTop(),
-                getMeasuredWidth() - getPaddingRight(),
-                getMeasuredHeight() - getPaddingBottom());
-        mHalfWheelHeight = mRectDrawn.height() / 2;
+        mHalfWheelHeight = mRectDrawn.centerY();
 
         // TextSize
         mItemTextSize = mItemHeight * mItemTextSizeScale;
@@ -161,6 +162,8 @@ public class Wheel extends View implements Runnable {
         mDrawCenterY = (int) (mHalfWheelHeight - ((mPaint.ascent() + mPaint.descent()) / 2));
 
         computeFlingLimitY();
+
+        setMeasuredDimension(getMeasuredWidth(), getMeasuredHeight());
     }
 
     @Override
@@ -250,9 +253,9 @@ public class Wheel extends View implements Runnable {
             if (listener != null) {
                 int position = getSelectedItemPosition();
                 String value = null;
-                if(datas != null
-                        && datas.size() > position){
-                   value = datas.get(position);
+                if (datas != null
+                        && datas.size() > position) {
+                    value = datas.get(position);
                 }
 
                 listener.onWheelItemSelected(position, value);
@@ -271,8 +274,8 @@ public class Wheel extends View implements Runnable {
 
     @Override
     protected void onDraw(Canvas canvas) {
-        if(datas == null
-                || datas.size() < 1){
+        if (datas == null
+                || datas.size() < 1) {
             return;
         }
         // 计算首个绘画的数据源的数据index
@@ -341,11 +344,12 @@ public class Wheel extends View implements Runnable {
 
     /**
      * 获取当前选中的Item Value
+     *
      * @return
      */
-    public String getSelectedItemValue(){
-        if(datas == null
-                || datas.size() < 1){
+    public String getSelectedItemValue() {
+        if (datas == null
+                || datas.size() < 1) {
             return null;
         }
         return datas.get(getSelectedItemPosition());
@@ -365,17 +369,19 @@ public class Wheel extends View implements Runnable {
 
     /**
      * 是否支持循环滚动
+     *
      * @return
      */
-    public boolean isCyclic(){
+    public boolean isCyclic() {
         return isCyclic;
     }
 
     /**
      * 当前滚轮状态
+     *
      * @return
      */
-    public WheelState currentState(){
+    public WheelState currentState() {
         return mState;
     }
 
@@ -393,9 +399,10 @@ public class Wheel extends View implements Runnable {
 
     /**
      * 设置相对选中项
+     *
      * @param pos
      */
-    public void setSelectedPos(int pos){
+    public void setSelectedPos(int pos) {
         mScrollOffset = 0;
 
         mSelectedItemPos = pos;
@@ -440,7 +447,7 @@ public class Wheel extends View implements Runnable {
      * @return
      */
     float computeDrawCenterX() {
-        return (float) getWidth() / 2;
+        return (float) mRectDrawn.centerX();
     }
 
     /**

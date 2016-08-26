@@ -23,15 +23,15 @@ public class DatePickerView extends LinearLayout {
     /**
      * 年份选择器
      */
-    Wheel yearWheel;
+    protected Wheel yearWheel;
     /**
      * 月份选择器
      */
-    Wheel monthWheel;
+    protected Wheel monthWheel;
     /**
      * 天数选择器
      */
-    Wheel dayWheel;
+    protected Wheel dayWheel;
 
     String mSelectedDate = "";
 
@@ -58,6 +58,7 @@ public class DatePickerView extends LinearLayout {
                 LayoutParams.MATCH_PARENT,
                 LayoutParams.MATCH_PARENT
         );
+        yearWheel.setPadding(0,50,0,50);
         year_params.weight = 1;
         addView(yearWheel, year_params);
 
